@@ -4,30 +4,47 @@ import org.example.vidyavriti.Models.Users;
 import org.example.vidyavriti.Repositories.UsersRepository;
 import org.example.vidyavriti.Role;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UsersService {
     @Autowired
     UsersRepository usersRepository;
 
-    public void addUser(String userType, Users user,boolean studentSignup){
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    JwtService jwtService;
+
+    public void studentSignup(Users user){
         if(usersRepository.findByUserName(user.getUserName()).isPresent()){
-            throw new RuntimeException("UserName allready exist!");
+            throw  new RuntimeException("Username allready exist!");
         }
         if(usersRepository.findByEmail(user.getEmail()).isPresent()){
             throw new RuntimeException("Email allready exist!");
         }
-        if(studentSignup) userType = "register";
-        else {
-            if (userType.equals("student")) user.setRole(Role.STUDENT);
-            else if (userType.equals("admin")) user.setRole(Role.ADMIN);
-            else if (userType.equals("manager")) user.setRole(Role.MANAGER);
-            else throw new RuntimeException("Invalid Role!");
-        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.STUDENT);
         usersRepository.save(user);
+
     }
 
-    public void studentSignUp(Users user){
-        addUser("student",user,true);
+    public String studentLogin(Users user){
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserName(),user.getPassword()));
+        if(authentication.isAuthenticated()){
+            return jwtService.generateToken(user);
+        }
+        return "Failed!";
     }
+
+
 
 }
