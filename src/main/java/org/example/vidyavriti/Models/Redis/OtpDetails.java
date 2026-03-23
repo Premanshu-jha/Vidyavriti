@@ -1,6 +1,6 @@
 package org.example.vidyavriti.Models.Redis;
 
-import jakarta.persistence.Id;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @RedisHash(value = "OtpDetails",timeToLive = 300)
