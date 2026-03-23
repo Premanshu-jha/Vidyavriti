@@ -44,7 +44,7 @@ public class OtpService {
          String tokenUserName = jwtService.extractUserName(token.substring(7));
 
          OtpDetails otpDetails = otpRepository.findById(tokenEmail).orElseThrow(()->new RuntimeException("PLease generate otp before verifying!"));
-         Users user = usersRepository.findByUserName(tokenUserName).orElseThrow(()->new RuntimeException("The user with the given email doesnt exist!"));
+         Users user = usersRepository.findByUserName(tokenUserName).orElseThrow(()->new RuntimeException("The user with the given email doesn't exist!"));
 
          boolean isVerified = otpDetails.getOtpCode().equals(reqOtp.getOtpCode());
          boolean isUserVerified = user.isVerified();
