@@ -23,7 +23,10 @@ public class OtpService {
     @Autowired
     UsersRepository usersRepository;
 
-    public String generateOtp(OtpDetails otpDetails,String token){
+    @Autowired
+    EmailService emailService;
+
+    public void generateOtp(OtpDetails otpDetails,String token){
         String tokenEmail = (String) jwtService.extractAllClaims(token.substring(7)).get("email");
          if(otpDetails.getEmail() == null)
              throw new RuntimeException("Please enter your email!");
@@ -34,10 +37,10 @@ public class OtpService {
          String otp = String.format("%06d",new Random().nextInt(999999));
          otpDetails.setOtpCode(otp);
         otpRepository.save(otpDetails);
-         return String.format("Your otp is %s",otp);
+        emailService.sendOtpEmail(otp,tokenEmail);
     }
 
-    public String verifyOtp(OtpDetails reqOtp,String token){
+    public void verifyOtp(OtpDetails reqOtp,String token){
         String tokenEmail = (String) jwtService.extractAllClaims(token.substring(7)).get("email");
          if(reqOtp.getOtpCode() == null || reqOtp.getOtpCode().length() < 6)
              throw new RuntimeException("Please enter a valid otp!");
@@ -54,9 +57,9 @@ public class OtpService {
          }
          if(isVerified){
              otpRepository.deleteById(tokenEmail);
-             return "Verification Succesfull!";
+             emailService.verificationStatus("Verification Succesfull!",tokenEmail);
          }
-         return "Verification Failed!";
+         else throw new RuntimeException("Invalid OTP!");
 
     }
 }

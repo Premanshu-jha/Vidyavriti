@@ -14,11 +14,13 @@ public class OtpController {
 
     @PostMapping("/generate-otp")
     public String generateOtp(@RequestBody OtpDetails otpDetails, @RequestHeader("Authorization") String token){
-        return otpService.generateOtp(otpDetails,token);
+        otpService.generateOtp(otpDetails,token);
+        return "OTP sent to ur email!";
     }
 
     @PostMapping("/verify-otp")
     public String verifyOtp(@RequestBody OtpDetails reqOtp,@RequestHeader("Authorization") String token){
-        return otpService.verifyOtp(reqOtp,token);
+        otpService.verifyOtp(reqOtp,token);
+        return "OTP Verified Succesfully!";
     }
 }
