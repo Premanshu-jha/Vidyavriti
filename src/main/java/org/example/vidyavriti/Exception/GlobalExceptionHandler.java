@@ -10,8 +10,8 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String,Object>> exceptionHandler(RuntimeException exception){
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<Map<String,Object>> exceptionHandler(CustomException exception){
          Map<String,Object> response = new HashMap<>();
          response.put("status","FAILED");
          response.put("message",exception.getMessage());
