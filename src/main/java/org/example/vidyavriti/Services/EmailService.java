@@ -1,4 +1,4 @@
-package org.example.vidyavriti.Services.Redis;
+package org.example.vidyavriti.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
